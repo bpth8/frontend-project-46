@@ -1,9 +1,6 @@
 #!/usr/bin/env node
 
-// eslint-disable-next-line import/no-extraneous-dependencies
 import { Command } from 'commander';
-// eslint-disable-next-line no-unused-vars, import/extensions
-import genDiff from '../src/index.js';
 
 const program = new Command();
 
@@ -12,4 +9,19 @@ program
   .description('Compares two configuration files and shows a difference.')
   .version('0.0.1');
 
+program
+  .argument('<filepath1>', 'path to the first configuration file')
+  .argument('<filepath2>', 'path to the second configuration file');
+
+program
+  .option('-f, --format <type>', 'output format', 'stylish');
+
 program.parse();
+
+const options = program.opts();
+const filepath1 = program.args[0];
+const filepath2 = program.args[1];
+
+console.log('Filepath 1:', filepath1);
+console.log('Filepath 2:', filepath2);
+console.log('Format:', options.format);

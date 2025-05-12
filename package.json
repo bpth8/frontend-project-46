@@ -20,5 +20,8 @@
   "bugs": {
     "url": "https://github.com/bpth8/frontend-project-46/issues"
   },
-  "homepage": "https://github.com/bpth8/frontend-project-46#readme"
+  "homepage": "https://github.com/bpth8/frontend-project-46#readme",
+  "dependencies": {
+    "commander": "^13.1.0"
+  }
 }
