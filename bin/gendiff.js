@@ -1,6 +1,9 @@
 #!/usr/bin/env node
 
 import { Command } from 'commander';
+import path from 'path';
+import parseFile from '../bin/parseFile.js';
+import genDiff from '../src/index.js';
 
 const program = new Command();
 
@@ -18,10 +21,15 @@ program
 
 program.parse();
 
-const options = program.opts();
 const filepath1 = program.args[0];
 const filepath2 = program.args[1];
 
-console.log('Filepath 1:', filepath1);
-console.log('Filepath 2:', filepath2);
-console.log('Format:', options.format);
+const fullPath1 = path.resolve(process.cwd(), filepath1);
+const fullPath2 = path.resolve(process.cwd(), filepath2);
+
+const data1 = parseFile(fullPath1);
+const data2 = parseFile(fullPath2);
+
+const diff = genDiff(data1, data2);
+
+console.log(diff);
