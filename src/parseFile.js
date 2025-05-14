@@ -1,7 +1,14 @@
+import path from 'path';
 import fs from 'fs';
 
-// eslint-disable-next-line consistent-return
 const parseFile = (filepath) => {
+  const ext = path.extname(filepath);
+
+  if (ext !== '.json') {
+    console.error(`Неподдерживаемый формат файла: ${ext}`);
+    process.exit(1);
+  }
+
   const fileContent = fs.readFileSync(filepath, 'utf-8');
 
   try {
