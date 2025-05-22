@@ -15,5 +15,5 @@ test('gendiff flat JSON', () => {
   const file1 = parseFile(getFixturePath('file1.json'));
   const file2 = parseFile(getFixturePath('file2.json'));
   const expected = readFile('expected.txt').trim();
-  expected(genDiff(file1, file2)).toBe(expected);
+  expect(genDiff(file1, file2)).toBe(expected);
 });

@@ -17,5 +17,5 @@ test('gendiff flat YAML', () => {
   const expected = readFile('expected.txt').trim();
   const parsed1 = parseFile(file1);
   const parsed2 = parseFile(file2);
-  expected(genDiff(parsed1, parsed2)).toBe(expected);
+  expect(genDiff(parsed1, parsed2)).toBe(expected);
 });
