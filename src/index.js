@@ -1,4 +1,3 @@
-// eslint-disable-next-line import/no-extraneous-dependencies
 import _ from 'lodash';
 
 const genDiff = (obj1, obj2) => {
