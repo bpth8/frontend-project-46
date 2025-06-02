@@ -1,25 +1,9 @@
-import _ from 'lodash';
+import buildDiffTree from './buildDiffTree.js';
+import formatStylish from './formatters/stylish.js';
 
-const genDiff = (obj1, obj2) => {
-  const keys = _.sortBy(_.union(Object.keys(obj1), Object.keys(obj2)));
-
-  const result = keys.map((key) => {
-    if (!Object.hasOwn(obj2, key)) {
-      return `  - ${key}: ${obj1[key]}`;
-    }
-    if (!Object.hasOwn(obj1, key)) {
-      return `  + ${key}: ${obj2[key]}`;
-    }
-    if (_.isEqual(obj1[key], obj2[key])) {
-      return `    ${key}: ${obj1[key]}`;
-    }
-    return [
-      `  - ${key}: ${obj1[key]}`,
-      `  + ${key}: ${obj2[key]}`,
-    ].join('\n');
-  });
-
-  return `{\n${result.join('\n')}\n}`;
+const genDiff = (obj1, obj2, format = 'stylish') => {
+  const tree = buildDiffTree(obj1, obj2);
+  return formatStylish(tree);
 };
 
 export default genDiff;
