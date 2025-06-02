@@ -1,9 +1,9 @@
 import buildDiffTree from './buildDiffTree.js';
-import formatStylish from './formatters/stylish.js';
+import format from './formatters/index.js';
 
-const genDiff = (obj1, obj2, format = 'stylish') => {
+const genDiff = (obj1, obj2, formatName = 'stylish') => {
   const tree = buildDiffTree(obj1, obj2);
-  return formatStylish(tree);
+  return format(tree, formatName);
 };
 
 export default genDiff;

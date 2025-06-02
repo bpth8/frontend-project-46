@@ -38,7 +38,7 @@ const formatStylish = (tree, depth = 1) => {
         return `${indent(depth)}- ${key}: ${stringify(value, depth)} # Удалена`;
       case 'unchanged':
         return `${indent(depth)}  ${key}: ${stringify(value, depth)}`;
-      case 'changed':
+      case 'updated':
         return [
           `${indent(depth)}- ${key}: ${stringify(oldValue, depth)} # Старое значение`,
           `${indent(depth)}+ ${key}: ${stringify(newValue, depth)} # Новое значение`

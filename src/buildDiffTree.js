@@ -19,9 +19,9 @@ const buildDiffTree = (obj1, obj2) => {
       return { key, type: 'nested', children: buildDiffTree(val1, val2) };
     }
 
-    if (!_.isEqual(val1, val2)) {
-      return { key, type: 'changed', oldValue: val1, newValue: val2 };
-    }
+  if (!_.isEqual(val1, val2)) {
+    return { key, type: 'changed', value1: val1, value2: val2 };
+  }
 
     return { key, type: 'unchanged', value: val1 };
   });
