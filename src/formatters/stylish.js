@@ -1,56 +1,55 @@
-const indent = (depth, replacer = ' ', spacesCount = 4) =>
-  replacer.repeat(Math.max(depth * spacesCount - 2, 0));
+import _ from 'lodash';
 
-const stringify = (value, depth) => {
-  if (typeof value === 'string') {
-    return value === '' ? '""' : value;
-  }
-
-  if (value === null) {
-    return 'null';
-  }
-
-  if (typeof value !== 'object') {
-    return String(value);
-  }
-
-  const indentObj = indent(depth + 1);
-  const bracketIndent = indent(depth);
-
-  const entries = Object.entries(value);
-  const lines = entries.map(
-    ([key, val]) => `${indentObj}  ${key}: ${stringify(val, depth + 1)}`
-  );
-
-  return `{\n${lines.join('\n')}\n${bracketIndent}  }`;
+const makeIndent = (depth = 0, marker = null) => {
+  const indentStep = 4;
+  const actualIndent = ' '.repeat(depth * indentStep);
+  return marker === null ? actualIndent : `${actualIndent.slice(2)}${marker} `;
 };
 
-const formatStylish = (tree, depth = 1) => {
-  const lines = tree.map((node) => {
-    const {
-      key, type, value, oldValue, newValue, children,
-    } = node;
+const formatValue = (values, depth) => {
+  if (_.isObject(values)) {
+    const objectIndent = makeIndent(depth + 1);
+    const objectContent = Object.entries(values)
+      .map(([key, value]) => `${objectIndent}${key}: ${formatValue(value, depth + 1)}`)
+      .join('\n');
+    return `{\n${objectContent}\n${makeIndent(depth)}}`;
+  }
+  return `${values}`;
+};
 
-    switch (type) {
-      case 'added':
-        return `${indent(depth)}+ ${key}: ${stringify(value, depth)} # Добавлена`;
-      case 'removed':
-        return `${indent(depth)}- ${key}: ${stringify(value, depth)} # Удалена`;
-      case 'unchanged':
-        return `${indent(depth)}  ${key}: ${stringify(value, depth)}`;
-      case 'updated':
-        return [
-          `${indent(depth)}- ${key}: ${stringify(oldValue, depth)} # Старое значение`,
-          `${indent(depth)}+ ${key}: ${stringify(newValue, depth)} # Новое значение`
-        ].join('\n');
-      case 'nested':
-        return `${indent(depth)}  ${key}: ${formatStylish(children, depth + 1)}`;
-      default:
-        throw new Error(`Unknown type: ${type}`);
+const renderStylish = (content) => {
+  const iter = (node, depth) => {
+    if (node.state === 'added') {
+      const indent = makeIndent(depth, '+');
+      const formattedValue = formatValue(node.value, depth);
+      return `${indent}${node.key}: ${formattedValue}`;
     }
-  });
-
-  return `{\n${lines.join('\n')}\n${indent(depth - 1)}}`;
+    if (node.state === 'deleted') {
+      const indent = makeIndent(depth, '-');
+      const formattedValue = formatValue(node.value, depth);
+      return `${indent}${node.key}: ${formattedValue}`;
+    }
+    if (node.state === 'unchanged') {
+      const indent = makeIndent(depth);
+      const formattedValue = formatValue(node.value, depth);
+      return `${indent}${node.key}: ${formattedValue}`;
+    }
+    if (node.state === 'changed') {
+      const deleteIndent = makeIndent(depth, '-');
+      const addedIndent = makeIndent(depth, '+');
+      const formattedNewValue = formatValue(node.newValue, depth);
+      const formattedOldValue = formatValue(node.oldValue, depth);
+      return [
+        `${deleteIndent}${node.key}: ${formattedOldValue}`,
+        `${addedIndent}${node.key}: ${formattedNewValue}`,
+      ];
+    }
+    const indent = makeIndent(depth);
+    const innerTree = node.children.flatMap((children) => iter(children, depth + 1)).join('\n');
+    return `${indent}${node.key}: {\n${innerTree}\n${indent}}`;
+  };
+  const tree = content.flatMap((node) => iter(node, 1)).join('\n');
+  return `{\n${tree}\n${makeIndent()}}`;
 };
 
-export default formatStylish;
+export default renderStylish;
